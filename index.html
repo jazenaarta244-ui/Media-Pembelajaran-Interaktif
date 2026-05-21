@@ -1,1 +1,1295 @@
 
+
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamelan Bali Interaktif</title>
+
+  <!-- External Libraries -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="h-full"
+  style="background: linear-gradient(180deg, #1A1A1A 0%, #2A0A14 50%, #1A1A1A 100%);
+         color: #FDF5E6;
+         font-family: 'Noto Sans', sans-serif;
+         overflow: hidden;">
+
+  <!-- ═══════════════════════════════════════════════
+       LOADING SCREEN
+  ════════════════════════════════════════════════ -->
+  <div id="loading-screen">
+    <div class="loader-mandala">
+      <div class="loader-inner"></div>
+    </div>
+    <div class="loader-text">MEMUAT GAMELAN BALI</div>
+    <div class="loading-bar">
+      <div class="loading-bar-fill" id="load-bar"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       TOAST NOTIFICATION
+  ════════════════════════════════════════════════ -->
+  <div id="toast" class="toast toast-info"></div>
+
+  <!-- ═══════════════════════════════════════════════
+       MODAL
+  ════════════════════════════════════════════════ -->
+  <div id="modal" class="modal-overlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 id="modal-title"
+            style="font-family:'Cinzel Decorative',serif; color:var(--gold); font-size:18px; margin:0;"></h3>
+        <button onclick="closeModal()"
+                style="background:none; border:none; color:var(--gold); cursor:pointer; font-size:20px;">✕</button>
+      </div>
+      <div id="modal-body"
+           style="color:var(--cream); font-family:'Crimson Pro',serif; font-size:15px; line-height:1.7;"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       MAIN APP
+  ════════════════════════════════════════════════ -->
+  <div id="app" class="h-full" style="display:none; overflow:hidden;">
+
+    <!-- ── Top Navigation Bar ─────────────────────── -->
+    <nav style="background: linear-gradient(90deg, rgba(26,26,26,.97), rgba(74,14,26,.95), rgba(26,26,26,.97));
+                border-bottom: 1px solid rgba(212,168,67,.2);
+                padding: 0 16px;
+                height: 56px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                position: relative;
+                z-index: 50;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:24px;">🎵</span>
+        <span id="nav-title"
+              style="font-family:'Cinzel Decorative',serif; color:var(--gold); font-size:15px; font-weight:700;">
+          Gamelan Bali
+        </span>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <div class="badge badge-gold">
+          <span>⭐</span>
+          <span id="nav-score">0</span>
+        </div>
+        <div class="progress-bar" style="width:80px;">
+          <div id="nav-progress" class="progress-fill" style="width:0%;"></div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── Scrollable Content Area ────────────────── -->
+    <div id="content-area"
+         style="height: calc(100% - 56px - 60px); overflow-y:auto; overflow-x:hidden;">
+
+      <!-- ══════════════════════════════════════════
+           PAGE: BERANDA
+      ═══════════════════════════════════════════ -->
+      <div id="page-beranda" class="page active" style="padding:20px 16px;">
+        <div style="text-align:center; padding:30px 0 20px;">
+          <!-- Gapura decorative SVG -->
+          <svg width="120" height="80" viewBox="0 0 120 80"
+               style="margin:0 auto 16px; display:block;">
+            <path d="M10 80 L10 30 Q10 10 30 10 L40 10 L40 0 L50 8 L60 0 L60 80"
+                  fill="none" stroke="#D4A843" stroke-width="1.5" opacity=".6"/>
+            <path d="M110 80 L110 30 Q110 10 90 10 L80 10 L80 0 L70 8 L60 0 L60 80"
+                  fill="none" stroke="#D4A843" stroke-width="1.5" opacity=".6"/>
+            <circle cx="60" cy="18" r="6" fill="none" stroke="#D4A843" stroke-width="1"/>
+          </svg>
+
+          <h1 id="welcome-heading"
+              style="font-family:'Cinzel Decorative',serif; color:var(--gold);
+                     font-size:clamp(22px,5vw,32px); margin:0 0 8px; line-height:1.3;">
+            Selamat Datang di Dunia Gamelan Bali
+          </h1>
+          <p style="font-family:'Crimson Pro',serif; color:var(--cream-dark);
+                    font-size:15px; max-width:500px; margin:0 auto 24px; opacity:.8;">
+            Jelajahi keindahan musik tradisional Bali melalui pengalaman belajar interaktif
+          </p>
+          <button class="btn-gold" onclick="navigateTo('materi')"
+                  style="font-size:16px; padding:12px 32px;">
+            🎶 Mulai Belajar
+          </button>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+                    gap:12px; max-width:600px; margin:20px auto;">
+
+          <div class="bali-card" style="padding:16px; text-align:center; cursor:pointer;"
+               onclick="navigateTo('materi')">
+            <div style="font-size:28px; margin-bottom:8px;">📚</div>
+            <div style="color:var(--gold); font-family:'Crimson Pro',serif; font-weight:600; font-size:14px;">Materi</div>
+            <div style="color:var(--cream); opacity:.6; font-size:12px; margin-top:4px;">5 Bab</div>
+          </div>
+
+          <div class="bali-card" style="padding:16px; text-align:center; cursor:pointer;"
+               onclick="navigateTo('latihan')">
+            <div style="font-size:28px; margin-bottom:8px;">✏️</div>
+            <div style="color:var(--gold); font-family:'Crimson Pro',serif; font-weight:600; font-size:14px;">Latihan</div>
+            <div style="color:var(--cream); opacity:.6; font-size:12px; margin-top:4px;">3 Aktivitas</div>
+          </div>
+
+          <div class="bali-card" style="padding:16px; text-align:center; cursor:pointer;"
+               onclick="navigateTo('game')">
+            <div style="font-size:28px; margin-bottom:8px;">🎮</div>
+            <div style="color:var(--gold); font-family:'Crimson Pro',serif; font-weight:600; font-size:14px;">Game</div>
+            <div style="color:var(--cream); opacity:.6; font-size:12px; margin-top:4px;">3 Mini Game</div>
+          </div>
+
+          <div class="bali-card" style="padding:16px; text-align:center; cursor:pointer;"
+               onclick="navigateTo('evaluasi')">
+            <div style="font-size:28px; margin-bottom:8px;">📝</div>
+            <div style="color:var(--gold); font-family:'Crimson Pro',serif; font-weight:600; font-size:14px;">Evaluasi</div>
+            <div style="color:var(--cream); opacity:.6; font-size:12px; margin-top:4px;">18 Soal</div>
+          </div>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div class="bali-card" style="padding:20px; max-width:600px; margin:20px auto;">
+          <h3 style="font-family:'Cinzel Decorative',serif; color:var(--gold);
+                     font-size:15px; margin:0 0 14px;">
+            📊 Dashboard Belajar
+          </h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <div style="font-size:11px; color:var(--cream); opacity:.6; margin-bottom:4px;">Materi Selesai</div>
+              <div class="progress-bar">
+                <div id="dash-materi" class="progress-fill" style="width:0%;"></div>
+              </div>
+              <div style="font-size:11px; color:var(--gold); margin-top:2px;">
+                <span id="dash-materi-pct">0</span>%
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:var(--cream); opacity:.6; margin-bottom:4px;">Skor Evaluasi</div>
+              <div class="progress-bar">
+                <div id="dash-eval" class="progress-fill" style="width:0%;"></div>
+              </div>
+              <div style="font-size:11px; color:var(--gold); margin-top:2px;">
+                <span id="dash-eval-pct">0</span>%
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;" id="badge-container">
+            <div class="badge badge-gold">🌟 Pemula</div>
+          </div>
+        </div>
+      </div><!-- /page-beranda -->
+
+      <!-- ══════════════════════════════════════════
+           PAGE: MATERI
+      ═══════════════════════════════════════════ -->
+      <div id="page-materi" class="page" style="padding:20px 16px; max-width:700px; margin:0 auto;">
+        <h2 style="font-family:'Cinzel Decorative',serif; color:var(--gold);
+                   font-size:20px; margin:0 0 16px; text-align:center;">
+          📚 Materi Pembelajaran
+        </h2>
+
+        <!-- Tab Buttons -->
+        <div style="display:flex; gap:4px; overflow-x:auto; margin-bottom:0;
+                    border-bottom:1px solid rgba(212,168,67,.15);">
+          <button class="tab-btn active" onclick="switchTab(this,'pengantar')">Pengantar</button>
+          <button class="tab-btn" onclick="switchTab(this,'jenis')">Jenis</button>
+          <button class="tab-btn" onclick="switchTab(this,'instrumen')">Instrumen</button>
+          <button class="tab-btn" onclick="switchTab(this,'fungsi')">Fungsi</button>
+          <button class="tab-btn" onclick="switchTab(this,'cara')">Cara Main</button>
+        </div>
+
+        <!-- Tab: Pengantar -->
+        <div id="tab-pengantar" class="tab-content active" style="padding:16px 0;">
+          <div class="bali-card" style="padding:20px;">
+            <h3 style="color:var(--gold); font-family:'Cinzel Decorative',serif;
+                       font-size:16px; margin:0 0 12px;">🎵 Apa itu Gamelan Bali?</h3>
+            <p style="font-family:'Crimson Pro',serif; font-size:15px; line-height:1.8;
+                      color:var(--cream); opacity:.9;">
+              <strong style="color:var(--gold);">Gamelan</strong> adalah ansambel musik tradisional
+              Indonesia yang terdiri dari berbagai instrumen perkusi, terutama logam. Gamelan Bali
+              memiliki karakteristik yang unik dibandingkan gamelan Jawa — temponya lebih cepat,
+              dinamikanya lebih kuat, dan sering mengandung perubahan ritme yang dramatis.
+            </p>
+            <div class="gapura-divider" style="font-size:12px;">❖</div>
+            <h4 style="color:var(--gold); font-family:'Crimson Pro',serif; font-size:15px; margin:0 0 8px;">
+              📜 Sejarah Singkat
+            </h4>
+            <p style="font-family:'Crimson Pro',serif; font-size:14px; line-height:1.8;
+                      color:var(--cream); opacity:.85;">
+              Gamelan Bali telah ada sejak abad ke-9 Masehi, berkembang seiring dengan masuknya
+              Hindu-Buddha ke Bali. Prasasti dan relief candi menunjukkan keberadaan alat musik
+              gamelan sejak zaman Kerajaan Bali Kuno. Gamelan menjadi bagian tak terpisahkan dari
+              kehidupan spiritual dan sosial masyarakat Bali.
+            </p>
+            <div style="margin-top:16px; padding:14px; background:rgba(212,168,67,.05);
+                        border-radius:8px; border-left:3px solid var(--gold);">
+              <p style="font-size:13px; color:var(--cream); opacity:.8; margin:0;
+                        font-family:'Crimson Pro',serif;">
+                💡 <strong>Tahukah kamu?</strong> UNESCO mengakui gamelan Indonesia sebagai
+                Warisan Budaya Tak Benda sejak tahun 2021!
+              </p>
+            </div>
+          </div>
+          <button class="btn-gold" style="margin-top:16px; width:100%;"
+                  onclick="markMateri('pengantar'); switchTab(document.querySelectorAll('.tab-btn')[1],'jenis')">
+            Lanjut: Jenis Gamelan →
+          </button>
+        </div>
+
+        <!-- Tab: Jenis -->
+        <div id="tab-jenis" class="tab-content" style="padding:16px 0;">
+          <div style="display:grid; gap:12px;">
+
+            <div class="bali-card" style="padding:16px; cursor:pointer;"
+                 onclick="openModal('Gong Kebyar','<p><strong>Gong Kebyar</strong> adalah jenis gamelan Bali yang paling populer dan modern, berkembang pada awal abad ke-20 di Bali Utara.</p><p style=\'margin-top:10px\'><strong>Ciri khas:</strong> Tempo cepat, dinamis, penuh ledakan (kebyar = meledak). Menggunakan tangga nada pelog 5 nada.</p><p style=\'margin-top:10px\'><strong>Fungsi:</strong> Mengiringi tari-tarian kreasi baru, upacara, dan pertunjukan seni.</p><p style=\'margin-top:10px\'><strong>Instrumen:</strong> Terdiri dari 25+ instrumen termasuk gangsa, jegogan, jublag, kendang, ceng-ceng, gong.</p>')">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:50px; height:50px; border-radius:10px; overflow:hidden; flex-shrink:0;">
+                <img src="https://4.bp.blogspot.com/-K8PRj5m1U8M/UYIB3O59mmI/AAAAAAAAAFY/QWtUWwDbS_Q/s1600/jegong.jpg"
+                      alt="Gong Kebyar"
+                    style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <div>
+                  <h4 style="color:var(--gold); margin:0 0 4px; font-family:'Crimson Pro',serif; font-size:15px;">Gong Kebyar</h4>
+                  <p style="color:var(--cream); opacity:.7; font-size:12px; margin:0;">Gamelan paling populer, dinamis &amp; modern</p>
+                </div>
+                <span style="margin-left:auto; color:var(--gold); opacity:.5;">→</span>
+              </div>
+            </div>
+
+            <div class="bali-card" style="padding:16px; cursor:pointer;"
+                 onclick="openModal('Gamelan Angklung','<p><strong>Gamelan Angklung</strong> adalah ansambel gamelan berlaras slendro 4 nada yang digunakan dalam upacara keagamaan, khususnya upacara ngaben (kremasi).</p><p style=\'margin-top:10px\'><strong>Ciri khas:</strong> Nada lembut dan khidmat, tempo sedang. Menggunakan 4 nada slendro.</p><p style=\'margin-top:10px\'><strong>Fungsi:</strong> Upacara Pitra Yadnya (ngaben), mengiringi tari sacral.</p>')">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:50px; height:50px; border-radius:10px; overflow:hidden; flex-shrink:0;">
+                <img src="https://3.bp.blogspot.com/_-Know-YVaYA/R2fHHdTwpZI/AAAAAAAAADY/pvaKRGtTXSQ/s320/balinese.jpg"
+                      alt="Gong Kebyar"
+                    style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <div>
+                  <h4 style="color:var(--gold); margin:0 0 4px; font-family:'Crimson Pro',serif; font-size:15px;">Gamelan Angklung</h4>
+                  <p style="color:var(--cream); opacity:.7; font-size:12px; margin:0;">Untuk upacara ngaben, nada khidmat</p>
+                </div>
+                <span style="margin-left:auto; color:var(--gold); opacity:.5;">→</span>
+              </div>
+            </div>
+
+            <div class="bali-card" style="padding:16px; cursor:pointer;"
+                 onclick="openModal('Semar Pegulingan','<p><strong>Semar Pegulingan</strong> berasal dari kata &quot;pegulingan&quot; (tempat tidur), dulunya dimainkan di istana untuk mengiringi raja tidur.</p><p style=\'margin-top:10px\'><strong>Ciri khas:</strong> Nada halus dan lembut, menggunakan 7 nada pelog lengkap. Sangat melodis.</p><p style=\'margin-top:10px\'><strong>Fungsi:</strong> Mengiringi tari Legong Keraton, pertunjukan istana.</p>')">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:50px; height:50px; border-radius:10px; overflow:hidden; flex-shrink:0;">
+                <img src="https://asia.si.edu/wp-content/uploads/2024/06/Figure-3-1.webp"
+                      alt="Gong Kebyar"
+                    style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <div>
+                  <h4 style="color:var(--gold); margin:0 0 4px; font-family:'Crimson Pro',serif; font-size:15px;">Semar Pegulingan</h4>
+                  <p style="color:var(--cream); opacity:.7; font-size:12px; margin:0;">Gamelan istana, nada halus &amp; lembut</p>
+                </div>
+                <span style="margin-left:auto; color:var(--gold); opacity:.5;">→</span>
+              </div>
+            </div>
+
+            <div class="bali-card" style="padding:16px; cursor:pointer;"
+                 onclick="openModal('Gender Wayang','<p><strong>Gender Wayang</strong> adalah ansambel yang terdiri dari 2-4 instrumen gender, dimainkan dengan dua tangan menggunakan panggul (pemukul).</p><p style=\'margin-top:10px\'><strong>Ciri khas:</strong> Teknik kotekan (interlocking), sangat virtuosik. Pemain harus menguasai teknik muting dengan tangan kiri sambil memukul dengan tangan kanan.</p><p style=\'margin-top:10px\'><strong>Fungsi:</strong> Mengiringi pertunjukan wayang kulit, upacara potong gigi, pernikahan.</p>')">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:50px; height:50px; border-radius:10px; overflow:hidden; flex-shrink:0;">
+                <img src="https://4.bp.blogspot.com/-9pQWhu9pttE/WtyY5JJhXcI/AAAAAAAAAHY/OByRNczLvrwa3f72k2Jt1wYpxOu_uuA_wCLcBGAs/s640/gender-wayang.jpg"
+                      alt="Gong Kebyar"
+                    style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <div>
+                  <h4 style="color:var(--gold); margin:0 0 4px; font-family:'Crimson Pro',serif; font-size:15px;">Gender Wayang</h4>
+                  <p style="color:var(--cream); opacity:.7; font-size:12px; margin:0;">Untuk wayang kulit, teknik tinggi</p>
+                </div>
+                <span style="margin-left:auto; color:var(--gold); opacity:.5;">→</span>
+              </div>
+            </div>
+          </div>
+          <button class="btn-gold" style="margin-top:16px; width:100%;"
+                  onclick="markMateri('jenis'); switchTab(document.querySelectorAll('.tab-btn')[2],'instrumen')">
+            Lanjut: Instrumen →
+          </button>
+        </div>
+
+        <!-- Tab: Instrumen -->
+        <div id="tab-instrumen" class="tab-content" style="padding:16px 0;">
+          <div id="instrumen-grid"
+               style="display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+                      gap:14px; justify-items:center;">
+            <div class="instrumen-item">
+              <img src="https://th.bing.com/th/id/OIP.-iJpx9xA4yCgyf81uKK0lAAAAA?w=131&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Gong">
+              <p>Gong</p>
+            </div>
+            <div class="instrumen-item">
+              <img src="https://th.bing.com/th/id/OIP.hGI8wvLN8m2tt6tiTJr-EgHaFc?w=233&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Kendang">
+              <p>Kendang</p>
+            </div>
+            <div class="instrumen-item">
+              <img src="https://th.bing.com/th/id/OIP.4XmBIlQrwgE68tC9E7cZ_gHaEL?w=332&h=187&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Ceng-ceng">
+              <p>Ceng-ceng</p>
+            </div>
+            <div class="instrumen-item">
+              <img src="https://th.bing.com/th/id/OIP.SZqAT7PE6IRKzuAsEacnNwHaEK?w=276&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Reyong">
+              <p>Reyong</p>
+            </div>
+            <div class="instrumen-item">
+              <img src="https://th.bing.com/th/id/OIP.tnfF5zL0mXyH7iUkIpYXBgHaE7?w=270&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Gangsa">
+              <p>Gangsa</p>
+            </div>
+            <div class="instrumen-item">
+              <img src="https://th.bing.com/th/id/OIP.AjRExbN6do--A4WjogQCsQHaGY?w=214&h=185&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Jegogan">
+              <p>Jegogan</p>
+            </div>
+            <div class="instrumen-item">
+              <img src="https://th.bing.com/th/id/OIP.6hBTWdxhUOWJ5FeLTU9FOAHaFL?w=267&h=187&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Jublag">
+              <p>Jublag</p>
+            </div>
+            <div class="instrumen-item">
+              <img src="https://th.bing.com/th/id/OIP.xUKHrkz5Sn9GGGi_TZ8uswHaHa?w=189&h=189&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Suling">
+              <p>Suling</p>
+            </div>
+            <button class="btn-gold" style="margin-top:20px; width:100%; grid-column:1/-1;"
+                    onclick="markMateri('instrumen'); switchTab(document.querySelectorAll('.tab-btn')[3],'fungsi')">
+              Lanjut: Fungsi →
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab: Fungsi -->
+        <div id="tab-fungsi" class="tab-content" style="padding:16px 0;">
+          <div id="fungsi-accordions"></div>
+          <button class="btn-gold" style="margin-top:16px; width:100%;"
+                  onclick="markMateri('fungsi'); switchTab(document.querySelectorAll('.tab-btn')[4],'cara')">
+            Lanjut: Cara Memainkan →
+          </button>
+        </div>
+
+        <!-- Tab: Cara Main -->
+        <div id="tab-cara" class="tab-content" style="padding:16px 0;">
+          <div class="bali-card" style="padding:20px;">
+            <h3 style="color:var(--gold); font-family:'Cinzel Decorative',serif;
+                       font-size:16px; margin:0 0 14px;">🥢 Teknik Dasar Memainkan Gamelan</h3>
+            <div style="display:grid; gap:14px;">
+              <div style="padding:12px; background:rgba(212,168,67,.05); border-radius:8px; border-left:3px solid var(--gold);">
+                <h4 style="color:var(--gold); font-size:14px; margin:0 0 6px; font-family:'Crimson Pro',serif;">1. Posisi Duduk (Bersila)</h4>
+                <p style="color:var(--cream); opacity:.85; font-size:13px; margin:0; font-family:'Crimson Pro',serif;">
+                  Duduk bersila dengan punggung tegak menghadap instrumen. Posisi nyaman dan rileks agar tangan bebas bergerak.
+                </p>
+              </div>
+              <div style="padding:12px; background:rgba(212,168,67,.05); border-radius:8px; border-left:3px solid var(--gold);">
+                <h4 style="color:var(--gold); font-size:14px; margin:0 0 6px; font-family:'Crimson Pro',serif;">2. Cara Memegang Panggul (Pemukul)</h4>
+                <p style="color:var(--cream); opacity:.85; font-size:13px; margin:0; font-family:'Crimson Pro',serif;">
+                  Pegang panggul dengan tangan kanan di antara jari tengah dan jari manis. Genggaman tidak terlalu kencang agar suara resonan.
+                </p>
+              </div>
+              <div style="padding:12px; background:rgba(212,168,67,.05); border-radius:8px; border-left:3px solid var(--gold);">
+                <h4 style="color:var(--gold); font-size:14px; margin:0 0 6px; font-family:'Crimson Pro',serif;">3. Teknik Memukul &amp; Muting</h4>
+                <p style="color:var(--cream); opacity:.85; font-size:13px; margin:0; font-family:'Crimson Pro',serif;">
+                  Pukul bilah dengan tangan kanan, lalu jepit bilah sebelumnya dengan tangan kiri
+                  untuk menghentikan getaran (teknik <em>tutup</em>). Ini menghasilkan nada yang bersih.
+                </p>
+              </div>
+              <div style="padding:12px; background:rgba(212,168,67,.05); border-radius:8px; border-left:3px solid var(--gold);">
+                <h4 style="color:var(--gold); font-size:14px; margin:0 0 6px; font-family:'Crimson Pro',serif;">4. Pola Kotekan (Interlocking)</h4>
+                <p style="color:var(--cream); opacity:.85; font-size:13px; margin:0; font-family:'Crimson Pro',serif;">
+                  Dua pemain memainkan pola yang saling mengisi — <strong>polos</strong> (melodi utama)
+                  dan <strong>sangsih</strong> (pelengkap) — menghasilkan ritme yang kompleks dan kaya.
+                </p>
+              </div>
+            </div>
+            <div class="gapura-divider" style="font-size:12px; margin-top:16px;">❖</div>
+            <h4 style="color:var(--gold); font-size:14px; margin:0 0 10px; font-family:'Crimson Pro',serif;">🎹 Coba Pola Sederhana</h4>
+            <p style="font-size:12px; color:var(--cream); opacity:.7; margin:0 0 10px;">Klik bilah nada di bawah untuk memainkan pola dasar:</p>
+            <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;" id="note-keys"></div>
+            <p id="pattern-display"
+               style="text-align:center; font-size:13px; color:var(--gold); margin:12px 0 0;
+                      font-family:'Crimson Pro',serif; min-height:20px;"></p>
+          </div>
+          <button class="btn-gold" style="margin-top:16px; width:100%;"
+        onclick="markMateri('cara'); showToast('Materi selesai! Coba latihan sekarang 🎉','success'); navigateTo('latihan')">
+  ✅ Selesai! Ke Latihan →
+</button>
+        </div>
+      </div><!-- /page-materi -->
+
+      <!-- ══════════════════════════════════════════
+           PAGE: LATIHAN (LKPD)
+      ═══════════════════════════════════════════ -->
+      <div id="page-latihan" class="page" style="padding:20px 16px; max-width:700px; margin:0 auto;">
+        <h2 style="font-family:'Cinzel Decorative',serif; color:var(--gold);
+                   font-size:20px; margin:0 0 16px; text-align:center;">✏️ Latihan (LKPD)</h2>
+        <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; justify-content:center;">
+          <button class="btn-maroon" onclick="showDragActivity(0)" id="drag-btn-0" style="font-size:13px;">🔗 Cocokkan Nama</button>
+          <button class="btn-maroon" onclick="showDragActivity(1)" id="drag-btn-1" style="font-size:13px;">🎯 Cocokkan Fungsi</button>
+          <button class="btn-maroon" onclick="showDragActivity(2)" id="drag-btn-2" style="font-size:13px;">📋 Susun Urutan</button>
+        </div>
+        <div id="drag-area" class="bali-card" style="padding:20px; min-height:200px;"></div>
+      </div><!-- /page-latihan -->
+
+      <!-- ══════════════════════════════════════════
+           PAGE: GAME
+      ═══════════════════════════════════════════ -->
+      <div id="page-game" class="page" style="padding:20px 16px; max-width:700px; margin:0 auto;">
+        <h2 style="font-family:'Cinzel Decorative',serif; color:var(--gold);
+                   font-size:20px; margin:0 0 16px; text-align:center;">🎼 Bermain</h2>
+        <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; justify-content:center;">
+          <button class="btn-maroon" onclick="showGame('memory')" style="font-size:13px;">🧠 Memory Card</button>
+          <button class="btn-maroon"
+                  onclick="window.open('https://jazenaarta.itch.io/balinese-music-gamelan-gong-kebyar')"
+                  style="font-size:13px;">🎼 Bermain dengan Notasi</button>
+          <button class="btn-maroon"
+                  onclick="window.open('https://jazenaarta.itch.io/main-bebas-gamelan')"
+                  style="font-size:13px;">🥁 Bermain Bebas</button>
+        </div>
+        <div id="game-area" class="bali-card" style="padding:20px; min-height:200px;"></div>
+      </div><!-- /page-game -->
+
+      <!-- ══════════════════════════════════════════
+           PAGE: EVALUASI
+      ═══════════════════════════════════════════ -->
+      <div id="page-evaluasi" class="page" style="padding:20px 16px; max-width:700px; margin:0 auto;">
+        <h2 style="font-family:'Cinzel Decorative',serif; color:var(--gold);
+                   font-size:20px; margin:0 0 16px; text-align:center;">📝 Evaluasi</h2>
+        <div id="eval-area"></div>
+      </div><!-- /page-evaluasi -->
+
+      <!-- ══════════════════════════════════════════
+           PAGE: TENTANG
+      ═══════════════════════════════════════════ -->
+      <div id="page-tentang" class="page" style="padding:20px 16px; max-width:700px; margin:0 auto;">
+        <h2 style="font-family:'Cinzel Decorative',serif; color:var(--gold);
+                   font-size:20px; margin:0 0 16px; text-align:center;">ℹ️ Tentang</h2>
+        <div class="bali-card" style="padding:24px;">
+          <div style="text-align:center; margin-bottom:16px;">
+            <span style="font-size:48px;">🎵</span>
+            <h3 style="font-family:'Cinzel Decorative',serif; color:var(--gold);
+                       font-size:18px; margin:10px 0 4px;">Gamelan Bali Interaktif</h3>
+            <p style="color:var(--cream); opacity:.7; font-size:13px; margin:0;">Versi 1.0 — Media Pembelajaran Seni Budaya</p>
+          </div>
+          <div class="gapura-divider" style="font-size:12px;">❖</div>
+          <div style="font-family:'Crimson Pro',serif; font-size:14px; line-height:1.8;
+                      color:var(--cream); opacity:.85;">
+            <p style="margin:0 0 12px;">Aplikasi ini dirancang sebagai media pembelajaran interaktif untuk mata pelajaran
+              <strong style="color:var(--gold);">Seni Budaya</strong>, khususnya materi Gamelan Bali.</p>
+            <p style="margin:0 0 12px;"><strong style="color:var(--gold);">Sasaran:</strong> Siswa SMP/SMA</p>
+            <p style="margin:0 0 12px;"><strong style="color:var(--gold);">Tujuan:</strong></p>
+            <ul style="margin:0; padding-left:20px;">
+              <li>Mengenal jenis-jenis gamelan Bali</li>
+              <li>Memahami instrumen dan fungsinya</li>
+              <li>Mengapresiasi warisan budaya Bali</li>
+              <li>Belajar melalui eksplorasi interaktif</li>
+            </ul>
+          </div>
+          <div style="margin-top:16px; padding:12px; background:rgba(212,168,67,.05);
+                      border-radius:8px; text-align:center;">
+            <p style="font-size:12px; color:var(--cream); opacity:.6; margin:0;">
+              Dibuat dengan ❤️ untuk pendidikan seni budaya Indonesia
+            </p>
+          </div>
+        </div>
+      </div><!-- /page-tentang -->
+
+    </div><!-- /content-area -->
+
+    <!-- ── Bottom Navigation Bar ──────────────────── -->
+    <nav style="height:60px;
+                background: linear-gradient(90deg, rgba(26,26,26,.98), rgba(74,14,26,.95), rgba(26,26,26,.98));
+                border-top: 1px solid rgba(212,168,67,.2);
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                padding: 0 8px;">
+      <button onclick="navigateTo('beranda')" class="nav-item" data-page="beranda">
+        <span style="font-size:18px;">🏠</span>
+        <span class="nav-text">Beranda</span>
+      </button>
+      <button onclick="navigateTo('materi')" class="nav-item" data-page="materi">
+        <span style="font-size:18px;">📚</span>
+        <span class="nav-text">Materi</span>
+      </button>
+      <button onclick="navigateTo('latihan')" class="nav-item" data-page="latihan">
+        <span style="font-size:18px;">✏️</span>
+        <span class="nav-text">Latihan</span>
+      </button>
+      <button onclick="navigateTo('game')" class="nav-item" data-page="game">
+        <span style="font-size:18px;">🎮</span>
+        <span class="nav-text">Game</span>
+      </button>
+      <button onclick="navigateTo('evaluasi')" class="nav-item" data-page="evaluasi">
+        <span style="font-size:18px;">📝</span>
+        <span class="nav-text">Evaluasi</span>
+      </button>
+      <button onclick="navigateTo('tentang')" class="nav-item" data-page="tentang">
+        <span style="font-size:18px;">ℹ️</span>
+        <span class="nav-text">Tentang</span>
+      </button>
+    </nav>
+
+  </div><!-- /app -->
+
+  <!-- ═══════════════════════════════════════════════
+       JAVASCRIPT
+  ════════════════════════════════════════════════ -->
+  <script>
+// ===== STATE =====
+const state = {
+  score: 0,
+  materiDone: new Set(),
+  evalScore: 0,
+  evalTotal: 0,
+  evalDone: false,
+  badges: ['🌟 Pemula'],
+  playedNotes: []
+};
+
+const fungsiData = [
+  {
+    title:`
+      <div class="flex items-center gap-3">
+        <img src="https://th.bing.com/th/id/OIP.4spwIA5nFVDNyjlFv2SxtQHaHa?w=164&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3">
+        <span class="text-2xl font-extrabold">Upacara Agama</span>
+      </div>
+    `,
+    desc:'Gamelan adalah bagian integral dari setiap upacara Hindu di Bali. Dalam konsep Tri Hita Karana, gamelan menjadi penghubung antara manusia dan alam spiritual. Setiap jenis upacara memiliki gamelan spesifik — Angklung untuk ngaben, Gender Wayang untuk pernikahan.'
+  },
+
+  {
+    title:`
+      <div class="flex items-center gap-3">
+        <img src="https://th.bing.com/th/id/OIP.9C7WQNbAlD4JCggUCP0BkAHaEK?w=278&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3">
+        <span class="text-2xl font-extrabold">Tari Tradisional</span>
+      </div>
+    `,
+    desc:'Gamelan dan tari Bali tidak bisa dipisahkan. Penari bergerak mengikuti setiap nuansa musik — dinamika, tempo, dan aksen. Tari Legong diiringi Semar Pegulingan, Tari Barong diiringi Gong Kebyar. Musik dan tari bersatu dalam harmoni sempurna.'
+  },
+
+  {
+    title:`
+      <div class="flex items-center gap-3">
+        <img src="https://th.bing.com/th/id/OIP.Lw25TEyPOOFtPLP-h5InRwHaE7?w=243&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3">
+        <span class="text-2xl font-extrabold">Drama & Wayang</span>
+      </div>
+    `,
+    desc:'Pertunjukan wayang kulit Bali menggunakan Gender Wayang sebagai pengiring. Dalang (pemain wayang) dan penabuh (pemain gender) harus memiliki koneksi yang kuat. Gamelan mengikuti emosi cerita — tegangan, humor, kesedihan, dan kemenangan.'
+  },
+
+  {
+    title:`
+      <div class="flex items-center gap-3">
+        <img src="https://th.bing.com/th/id/OIP.NpNMQLMR6UDVr5-3WWTCTwHaFj?w=242&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3">
+        <span class="text-2xl font-extrabold">Hiburan & Sosial</span>
+      </div>
+    `,
+    desc:'Gamelan dimainkan dalam berbagai acara sosial: festival, perlombaan, dan hiburan masyarakat. Balai banjar (balai desa) menjadi tempat latihan bersama, memperkuat ikatan sosial komunitas. Kreasi baru terus bermunculan dalam festival gamelan.'
+  }
+];
+
+const quizQuestions = [
+  // Pilihan Ganda (10)
+  {type:'mc',q:'Gamelan Bali yang paling populer dan berkembang pada awal abad ke-20 adalah...',opts:['Gamelan Angklung','Gong Kebyar','Semar Pegulingan','Gender Wayang'],ans:1,exp:'Gong Kebyar berkembang di Bali Utara awal abad ke-20, dikenal karena tempo cepat dan dinamis.'},
+  {type:'mc',q:'Instrumen apa yang berfungsi sebagai pemimpin ritme dalam gamelan?',opts:['Gong','Gangsa','Kendang','Suling'],ans:2,exp:'Kendang adalah pemimpin ritme yang mengatur tempo, dinamika, dan transisi musik.'},
+  {type:'mc',q:'Teknik dua pemain yang saling mengisi disebut...',opts:['Gamelan','Kotekan','Ngaben','Pelog'],ans:1,exp:'Kotekan (interlocking) adalah teknik dimana dua pemain memainkan pola polos dan sangsih yang saling melengkapi.'},
+  {type:'mc',q:'Gamelan Angklung menggunakan tangga nada...',opts:['Pelog 5 nada','Slendro 4 nada','Pelog 7 nada','Slendro 5 nada'],ans:1,exp:'Gamelan Angklung berlaras slendro dengan 4 nada.'},
+  {type:'mc',q:'Instrumen tiup satu-satunya dalam gamelan Bali adalah...',opts:['Reyong','Ceng-ceng','Suling','Jublag'],ans:2,exp:'Suling bambu adalah satu-satunya instrumen tiup dalam gamelan Bali.'},
+  {type:'mc',q:'Reyong dimainkan oleh berapa pemain?',opts:['2 pemain','3 pemain','4 pemain','5 pemain'],ans:2,exp:'Reyong dimainkan oleh 4 pemain secara bersamaan membentuk pola kotekan.'},
+  {type:'mc',q:'Semar Pegulingan dulunya dimainkan di...',opts:['Pasar','Istana','Sawah','Pantai'],ans:1,exp:'Semar Pegulingan berasal dari istana, awalnya mengiringi raja tidur.'},
+  {type:'mc',q:'UNESCO mengakui gamelan sebagai Warisan Budaya Tak Benda pada tahun...',opts:['2019','2020','2021','2022'],ans:2,exp:'UNESCO resmi mengakui gamelan Indonesia sebagai ICH pada tahun 2021.'},
+  {type:'mc',q:'Saih nada paling rendah dalam gamelan adalah...',opts:['Gangsa','Kantilan','Jegogan','Jublag'],ans:2,exp:'Jegogan memiliki bilah terlebar dan menghasilkan nada bass paling dalam.'},
+  {type:'mc',q:'Gender Wayang mengiringi pertunjukan...',opts:['Tari Pendet','Wayang Kulit','Tari Kecak','Joged'],ans:1,exp:'Gender Wayang secara khusus mengiringi pertunjukan wayang kulit Bali.'},
+  // Benar/Salah (5)
+  {type:'tf',q:'Gamelan Bali berkarakter lebih cepat dan dinamis dibanding gamelan Jawa.',ans:true,exp:'Benar! Gamelan Bali dikenal temponya lebih cepat dengan perubahan dinamika yang dramatis.'},
+  {type:'tf',q:'Kendang wadon adalah kendang yang berukuran lebih kecil.',ans:false,exp:'Salah. Kendang wadon (betina) berukuran lebih besar, sedangkan kendang lanang (jantan) lebih kecil.'},
+  {type:'tf',q:'Ceng-ceng terbuat dari bambu.',ans:false,exp:'Salah. Ceng-ceng adalah simbal yang terbuat dari perunggu.'},
+  {type:'tf',q:'Dalam kotekan, pola utama disebut "polos".',ans:true,exp:'Benar! Polos adalah pola melodi utama, sedangkan sangsih adalah pelengkapnya.'},
+  {type:'tf',q:'Gamelan hanya digunakan untuk hiburan di Bali.',ans:false,exp:'Salah. Gamelan memiliki fungsi sakral dalam upacara agama Hindu, selain hiburan, tari, dan drama.'},
+  // Tebak Gambar/Emoji (3)
+  {type:'img',q:'Instrumen apa berbentuk tabung diantara ini adalah ?',emoji:'',opts:['Gong','Kendang','Reyong','Gangsa'],ans:1,exp:'Emoji drum melambangkan Kendang, drum dua sisi pemimpin ritme gamelan.'},
+  {type:'img',q:'Instrumen apa yang paling kecil?',emoji:'',opts:['Ceng-ceng','Gangsa','Jegogan','Suling'],ans:3,exp:'Emoji wind chime melambangkan Suling, instrumen tiup dari bambu.'},
+  {type:'img',q:'Instrumen mana yang paling besar?',emoji:'',opts:['Gong','Jublag','Kendang','Reyong'],ans:0,exp:'Gong melambangkan Gong, instrumen terbesar dalam gamelan.'}
+];
+const dragActivities = [
+  {
+    title:'🔗 Cocokkan Nama Alat dengan Deskripsi',
+    instruction:'Seret nama instrumen ke deskripsi yang sesuai',
+    items:[
+      {drag:'Gong',target:'Instrumen terbesar, penanda berubah dan berakhirnya gending'},
+      {drag:'Kendang',target:'Drum pemimpin ritme'},
+      {drag:'Suling',target:'Instrumen tiup dari bambu'},
+      {drag:'Reyong',target:'12 pencon, dimainkan 4 orang'}
+    ]
+  },
+  {
+    title:'🎯 Cocokkan Jenis Gamelan dengan Fungsi',
+    instruction:'Seret jenis gamelan ke fungsi utamanya',
+    items:[
+      {drag:'Gong Kebyar',target:'Tari kreasi baru & festival'},
+      {drag:'Angklung',target:'Upacara ngaben'},
+      {drag:'Semar Pegulingan',target:'Tari Legong'},
+      {drag:'Gender Wayang',target:'Wayang kulit'}
+    ]
+  },
+  {
+    title:'📋 Susun Urutan Instrumen (Nada Rendah → Tinggi)',
+    instruction:'Seret instrumen ke urutan posisi yang benar',
+    items:[
+      {drag:'Jegogan',target:'1. Paling Belakang'},
+      {drag:'Jublag',target:'2. Belakang - Tengah'},
+      {drag:'Gangsa (Pemade)',target:'3. Paling Depan'},
+      {drag:'Gangsa (Kantilan)',target:'4. Depan - Tengah'}
+    ]
+  }
+];
+
+const memoryPairs = [
+  {id:'gong', name : 'Gong',img:'assets/Gong.webp'},
+  {id:'kendang',name : 'Kendang', img:'assets/Kendang.jpg'},
+  {id:'suling', name: 'Suling', img:'assets/Suling.webp'},
+  {id:'gangsa', name:'Gangsa', img:'assets/Gangsa.webp'},
+  {id:'cengceng',name: 'Ceng ceng', img:'assets/Ceng ceng.webp'},
+  {id:'reyong',name:'Reyong', img:'assets/Reong.webp'}
+];
+
+const puzzleSize = 4;
+
+// ===== WEB AUDIO =====
+let audioCtx;
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
+
+const noteFreqs=[293.66,329.63,392.00,440.00,523.25];
+
+function playNote(freqIdx,type='triangle'){
+  const ctx=getAudioCtx();
+  const osc=ctx.createOscillator();
+  const gain=ctx.createGain();
+  const freq=noteFreqs[freqIdx%noteFreqs.length];
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq,ctx.currentTime);
+  gain.gain.setValueAtTime(0.3,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2);
+  osc.connect(gain);gain.connect(ctx.destination);
+  osc.start();osc.stop(ctx.currentTime+1.2);
+}
+
+function playInstrumentSound(name){
+  const ctx=getAudioCtx();
+  const types={Gong:'sine',Kendang:'square',Cengceng:'sawtooth',Gangsa:'triangle',Jegogan:'sine',Jublag:'sine',Reyong:'triangle',Suling:'sine'};
+  const freqMap={Gong:130,Kendang:100,Cengceng:800,Gangsa:523,Jegogan:196,Jublag:262,Reyong:659,Suling:880};
+  const osc=ctx.createOscillator();const gain=ctx.createGain();
+  osc.type=types[name]||'triangle';
+  osc.frequency.setValueAtTime(freqMap[name]||440,ctx.currentTime);
+  gain.gain.setValueAtTime(0.25,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+(name==='Gong'?2.5:1));
+  osc.connect(gain);gain.connect(ctx.destination);
+  osc.start();osc.stop(ctx.currentTime+(name==='Gong'?2.5:1));
+}
+
+// ===== NAVIGATION =====
+function navigateTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el=document.getElementById('page-'+page);
+  if(el){el.classList.add('active');document.getElementById('content-area').scrollTop=0}
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.style.opacity=n.dataset.page===page?'1':'.5';
+    n.style.transform=n.dataset.page===page?'scale(1.1)':'scale(1)';
+  });
+  if(page==='latihan')showDragActivity(0);
+  if(page==='game')showGame('soundboard');
+  if(page==='evaluasi')initEval();
+}
+
+// ===== TABS =====
+function switchTab(btn,tabId){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  const tab=document.getElementById('tab-'+tabId);
+  if(tab)tab.classList.add('active');
+}
+
+// ===== ACCORDION =====
+function toggleAccordion(body){
+  body.classList.toggle('open');
+  const icon=body.previousElementSibling.querySelector('.acc-icon');
+  if(icon)icon.textContent=body.classList.contains('open')?'−':'+';
+}
+
+// ===== MODAL =====
+function openModal(title,html){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+
+// ===== TOAST =====
+function showToast(msg,type='info'){
+  const t=document.getElementById('toast');
+  t.className='toast toast-'+type;
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ===== SCORE & PROGRESS =====
+function addScore(pts){
+  state.score+=pts;
+  document.getElementById('nav-score').textContent=state.score;
+  updateDashboard();
+  checkBadges();
+}
+
+function markMateri(section){
+  if(!state.materiDone.has(section)){
+    state.materiDone.add(section);
+    addScore(10);
+    showToast('+10 poin! Materi selesai','success');
+  }
+  updateDashboard();
+}
+
+function updateDashboard(){
+  const pct=Math.round((state.materiDone.size/5)*100);
+  const el1=document.getElementById('dash-materi');
+  const el1t=document.getElementById('dash-materi-pct');
+  if(el1)el1.style.width=pct+'%';
+  if(el1t)el1t.textContent=pct;
+  const navP=document.getElementById('nav-progress');
+  if(navP)navP.style.width=pct+'%';
+  const evalPct=state.evalTotal?Math.round((state.evalScore/state.evalTotal)*100):0;
+  const el2=document.getElementById('dash-eval');
+  const el2t=document.getElementById('dash-eval-pct');
+  if(el2)el2.style.width=evalPct+'%';
+  if(el2t)el2t.textContent=evalPct;
+}
+
+function checkBadges(){
+  const badges=new Set(state.badges);
+  if(state.materiDone.size>=3)badges.add('📚 Penjelajah');
+  if(state.materiDone.size>=5)badges.add('🎓 Ahli Gamelan');
+  if(state.score>=100)badges.add('🏆 Master Budaya');
+  if(state.evalDone&&state.evalScore/state.evalTotal>=0.9)badges.add('⭐ Nilai Sempurna');
+  state.badges=[...badges];
+  const bc=document.getElementById('badge-container');
+  if(bc)bc.innerHTML=state.badges.map(b=>`<div class="badge badge-gold">${b}</div>`).join('');
+}
+
+// ===== FUNGSI ACCORDIONS =====
+function buildFungsiAccordions(){
+  const container=document.getElementById('fungsi-accordions');
+  container.innerHTML=fungsiData.map((f,i)=>`
+    <div style="margin-bottom:8px;">
+      <div class="accordion-header" onclick="toggleAccordion(this.nextElementSibling)">
+        <span style="font-family:'Crimson Pro',serif;font-size:15px;">${f.title}</span>
+        <span class="acc-icon" style="font-size:18px;color:var(--gold);">+</span>
+      </div>
+      <div class="accordion-body">
+        <p style="font-family:'Crimson Pro',serif;font-size:14px;line-height:1.8;color:var(--cream);opacity:.85;margin:0;">${f.desc}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== NOTE KEYS =====
+function buildNoteKeys(){
+  const names=['Ding','Dong','Deng','Dung','Dang'];
+  const container=document.getElementById('note-keys');
+  container.innerHTML=names.map((n,i)=>`
+    <button onclick="playNoteKey(${i})"
+      style="width:52px;height:60px;border-radius:6px;border:1px solid rgba(212,168,67,.4);
+             background:linear-gradient(180deg,rgba(212,168,67,.15),rgba(212,168,67,.05));
+             color:var(--gold);cursor:pointer;font-family:'Crimson Pro',serif;font-size:12px;
+             transition:all .15s;display:flex;flex-direction:column;align-items:center;
+             justify-content:center;gap:2px;"
+      onmousedown="this.style.transform='scale(.92)'"
+      onmouseup="this.style.transform='scale(1)'"
+      onmouseleave="this.style.transform='scale(1)'">
+      <span style="font-size:16px;">🎵</span>
+      <span>${n}</span>
+    </button>
+  `).join('');
+}
+
+// ...DAN GANTI DENGAN KODE BARU INI:
+
+// 1. Tentukan path/lokasi file MP3 Anda sesuai urutan Ding, Dong, Deng, Dung, Dang
+const daftarAudio = [
+  'audio/Ding.mp3',
+  'audio/Dong.mp3',
+  'audio/Deng.mp3',
+  'audio/Dung.mp3',
+  'audio/Dang.mp3'
+];
+
+function playNoteKey(i) {
+  // 2. Panggil file audio berdasarkan indeks bilah yang diklik
+  const audioKustom = new Audio(daftarAudio[i % daftarAudio.length]);
+  
+  // 3. Atur volume suara (0.0 sampai 1.0)
+  audioKustom.volume = 0.9; 
+  
+  // 4. Mainkan audionya
+  audioKustom.play().catch(err => {
+    console.log("Audio belum siap memutar, butuh interaksi pengguna pertama kali:", err);
+  });
+
+  // 5. Update tampilan teks pola di layar (tetap dipertahankan dari kode lama Anda)
+  const names = ['Ding', 'Dong', 'Deng', 'Dung', 'Dang'];
+  state.playedNotes.push(names[i]);
+  if (state.playedNotes.length > 8) state.playedNotes.shift();
+  document.getElementById('pattern-display').textContent = state.playedNotes.join(' • ');
+}
+
+// ===== DRAG & DROP =====
+let currentDragItem=null;
+
+function showDragActivity(idx){
+  document.querySelectorAll('[id^="drag-btn"]').forEach((b,i)=>{
+    b.style.background=i===idx?'linear-gradient(135deg,var(--gold),var(--gold-light))':'';
+    b.style.color=i===idx?'var(--black)':'var(--gold)';
+  });
+  const act=dragActivities[idx];
+  const area=document.getElementById('drag-area');
+  const shuffled=[...act.items].sort(()=>Math.random()-.5);
+  area.innerHTML=`
+    <h3 style="color:var(--gold);font-family:'Cinzel Decorative',serif;font-size:15px;margin:0 0 6px;">${act.title}</h3>
+    <p style="font-size:12px;color:var(--cream);opacity:.7;margin:0 0 16px;">${act.instruction}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;" id="drag-source">
+      ${shuffled.map(it=>`<div class="drag-item" draggable="true" data-val="${it.drag}" ondragstart="dragStart(event)" ontouchstart="touchDragStart(event)">${it.drag}</div>`).join('')}
+    </div>
+    <div style="display:grid;gap:10px;">
+      ${act.items.map(it=>`
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="flex:1;font-size:13px;color:var(--cream);opacity:.8;font-family:'Crimson Pro',serif;">${it.target}</div>
+          <div class="drop-zone" style="min-width:120px;font-size:13px;" data-answer="${it.drag}"
+               ondragover="event.preventDefault();this.classList.add('over')"
+               ondragleave="this.classList.remove('over')"
+               ondrop="dropItem(event,this)"></div>
+        </div>
+      `).join('')}
+    </div>
+    <div id="drag-feedback" style="margin-top:12px;text-align:center;font-size:14px;font-family:'Crimson Pro',serif;"></div>
+  `;
+}
+
+function dragStart(e){
+  currentDragItem=e.target;
+  e.target.classList.add('dragging');
+  e.dataTransfer.setData('text/plain',e.target.dataset.val);
+}
+
+function dropItem(e,zone){
+  e.preventDefault();
+  zone.classList.remove('over');
+  if(zone.children.length>0)return;
+  const val=e.dataTransfer?e.dataTransfer.getData('text/plain'):currentDragItem?.dataset.val;
+  if(!val)return;
+  const src=currentDragItem||document.querySelector(`.drag-item[data-val="${val}"]`);
+  if(!src)return;
+  src.classList.remove('dragging');
+  if(val===zone.dataset.answer){
+    zone.classList.add('correct');
+    zone.textContent=val;
+    zone.style.color='#27AE60';
+    src.remove();
+    addScore(5);
+    const remaining=document.querySelectorAll('#drag-source .drag-item');
+    if(remaining.length===0){
+      document.getElementById('drag-feedback').innerHTML='<span style="color:#27AE60">🎉 Semua benar! Hebat!</span>';
+    }
+  }else{
+    zone.classList.add('wrong');
+    setTimeout(()=>zone.classList.remove('wrong'),600);
+    showToast('Coba lagi!','error');
+  }
+  currentDragItem=null;
+}
+
+function touchDragStart(e){
+  currentDragItem=e.target.closest('.drag-item');
+}
+
+// ===== GAMES =====
+function showGame(type){
+  const area=document.getElementById('game-area');
+  if(type==='soundboard')buildSoundboard(area);
+  else if(type==='memory')buildMemoryGame(area);
+  else if(type==='puzzle')buildPuzzle(area);
+}
+
+function buildSoundboard(area){
+  // 1. Ganti properti emoji menjadi path/alamat gambar kustom Anda
+  const instruments=[
+    {name:'Gong', img:'assets/Gong.webp'},
+    {name:'Gangsa', img:'assets/Gangsa.webp'},
+    {name:'Jegog', img:'assets/Jegog.jpg'},
+    {name:'Jublag', img:'assets/Jublag.jpg'},
+    {name:'Reong', img:'assets/Reong.webp'},
+    {name:'Suling', img:'assets/Suling.webp'}
+  ];
+
+  // 2. Perbarui struktur HTML untuk menampilkan tag <img>
+  area.innerHTML=`
+    <h3 style="color:var(--gold);font-family:'Cinzel Decorative',serif;font-size:15px;margin:0 0 6px;">🎵 Gamelan Soundboard</h3>
+    <p style="font-size:12px;color:var(--cream);opacity:.7;margin:0 0 16px;">Klik instrumen untuk mendengar suaranya!</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+      ${instruments.map(inst=>`
+        <div class="instrument-btn" onclick="playSoundboardInst('${inst.name}',this)" 
+             style="width:90px; height:105px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:6px;">
+          
+          <!-- Bagian Kotak Gambar -->
+          <div style="width:100%; height:60px; border-radius:6px; overflow:hidden; background:rgba(0,0,0,0.2);">
+            <img src="${inst.img}" alt="${inst.name}" style="width:100%; height:100%; object-fit:cover;">
+          </div>
+          
+          <!-- Nama Instrumen -->
+          <span style="font-size:11px; font-weight:600; color:var(--gold); text-align:center;">${inst.name}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function playSoundboardInst(name, el) {
+  el.classList.add('playing');
+  setTimeout(() => el.classList.remove('playing'), 400);
+  
+  // HAPUS .toLowerCase() agar tetap menggunakan huruf besar di awal (Gong, Gangsa, Reong)
+  const namaFile = name; 
+  
+  const audioInstrumen = new Audio(`audio/${namaFile}.mp3`);
+  audioInstrumen.volume = 0.8;
+  
+  audioInstrumen.play().catch(err => {
+    console.log("Gagal memutar audio soundboard: ", err);
+  });
+}
+// Memory Game
+let memoryState={cards:[],flipped:[],matched:new Set(),moves:0};
+
+function buildMemoryGame(area){
+  const pairs=[...memoryPairs,...memoryPairs].sort(()=>Math.random()-.5);
+  memoryState={cards:pairs,flipped:[],matched:new Set(),moves:0};
+  area.innerHTML=`
+    <h3 style="color:var(--gold);font-family:'Cinzel Decorative',serif;font-size:15px;margin:0 0 6px;">🃏 Memory Card</h3>
+    <p style="font-size:12px;color:var(--cream);opacity:.7;margin:0 0 4px;">Temukan pasangan instrumen! <span id="mem-moves">Langkah: 0</span></p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px;" id="memory-board">
+      ${pairs.map((p,i)=>`
+        <div class="memory-card" onclick="flipCard(${i})" id="mc-${i}">
+          <div class="memory-card-inner">
+            <!-- Bagian Depan Kartu (Tertutup) -->
+            <div class="memory-card-front" style="font-size:20px;">❖</div>
+            
+            <!-- Bagian Belakang Kartu (Terbuka - Memakai Gambar) -->
+            <div class="memory-card-back" style="padding: 4px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
+              <div style="width: 100%; height: 50px; border-radius: 4px; overflow: hidden;">
+                <img src="${p.img}" alt="${p.name}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+              </div>
+              <span style="font-size: 10px; font-weight: 600; margin-top: 2px; color: var(--gold); line-height: 1;">${p.name}</span>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div id="mem-feedback" style="margin-top:12px;text-align:center;font-size:14px;"></div>
+  `;
+}
+
+function flipCard(i){
+  const card=document.getElementById('mc-'+i);
+  if(card.classList.contains('flipped')||card.classList.contains('matched'))return;
+  if(memoryState.flipped.length>=2)return;
+  card.classList.add('flipped');
+  memoryState.flipped.push(i);
+  if(memoryState.flipped.length===2){
+    memoryState.moves++;
+    document.getElementById('mem-moves').textContent='Langkah: '+memoryState.moves;
+    const [a,b]=memoryState.flipped;
+    if(memoryState.cards[a].id===memoryState.cards[b].id){
+      setTimeout(()=>{
+        document.getElementById('mc-'+a).classList.add('matched');
+        document.getElementById('mc-'+b).classList.add('matched');
+        memoryState.matched.add(memoryState.cards[a].id);
+        memoryState.flipped=[];
+        if(memoryState.matched.size===memoryPairs.length){
+          addScore(20);
+          document.getElementById('mem-feedback').innerHTML='<span style="color:#27AE60">🎉 Selesai! '+memoryState.moves+' langkah</span>';
+        }
+      },400);
+    }else{
+      setTimeout(()=>{
+        document.getElementById('mc-'+a).classList.remove('flipped');
+        document.getElementById('mc-'+b).classList.remove('flipped');
+        memoryState.flipped=[];
+      },800);
+    }
+  }
+}
+
+// Puzzle Game
+let puzzleState=[];
+function buildPuzzle(area){
+  puzzleState=Array.from({length:puzzleSize*puzzleSize-1},(_,i)=>i+1);
+  puzzleState.push(0);
+  for(let i=puzzleState.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [puzzleState[i],puzzleState[j]]=[puzzleState[j],puzzleState[i]];
+  }
+  if(!isSolvable(puzzleState)){
+    [puzzleState[0],puzzleState[1]]=[puzzleState[1],puzzleState[0]];
+  }
+  renderPuzzle(area);
+}
+
+function isSolvable(arr){
+  let inv=0;
+  const flat=arr.filter(x=>x!==0);
+  for(let i=0;i<flat.length;i++)for(let j=i+1;j<flat.length;j++)if(flat[i]>flat[j])inv++;
+  const emptyRow=Math.floor(arr.indexOf(0)/puzzleSize);
+  return puzzleSize%2===1?inv%2===0:(inv+(puzzleSize-1-emptyRow))%2===0;
+}
+
+function renderPuzzle(area){
+  const labels=['','🔔','🥁','🔊','🎹','🎶','🎵','✨','🎐','🛕','💃','🎭','🎊','🎵','🏛️','🎭'];
+  area.innerHTML=`
+    <h3 style="color:var(--gold);font-family:'Cinzel Decorative',serif;font-size:15px;margin:0 0 6px;">🧩 Sliding Puzzle</h3>
+    <p style="font-size:12px;color:var(--cream);opacity:.7;margin:0 0 12px;">Susun angka 1–15 dengan menggeser kotak!</p>
+    <div style="display:grid;grid-template-columns:repeat(${puzzleSize},56px);gap:4px;justify-content:center;" id="puzzle-grid">
+      ${puzzleState.map((val,i)=>`
+        <div onclick="movePuzzle(${i})"
+          style="width:56px;height:56px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+                 cursor:${val?'pointer':'default'};font-size:${val?'18px':'0'};
+                 font-family:'Crimson Pro',serif;font-weight:600;transition:all .15s;
+                 ${val?'background:linear-gradient(135deg,rgba(212,168,67,.15),rgba(212,168,67,.05));border:1px solid rgba(212,168,67,.3);color:var(--gold);':'background:transparent;border:1px solid transparent;'}">
+          ${val?labels[val]||val:''}
+        </div>
+      `).join('')}
+    </div>
+    <div id="puzzle-feedback" style="margin-top:12px;text-align:center;font-size:14px;"></div>
+  `;
+}
+
+function movePuzzle(i){
+  const emptyIdx=puzzleState.indexOf(0);
+  const row=Math.floor(i/puzzleSize),col=i%puzzleSize;
+  const eRow=Math.floor(emptyIdx/puzzleSize),eCol=emptyIdx%puzzleSize;
+  if((Math.abs(row-eRow)+Math.abs(col-eCol))===1){
+    [puzzleState[i],puzzleState[emptyIdx]]=[puzzleState[emptyIdx],puzzleState[i]];
+    renderPuzzle(document.getElementById('game-area'));
+    const won=puzzleState.every((v,idx)=>idx===puzzleState.length-1?v===0:v===idx+1);
+    if(won){
+      addScore(30);
+      document.getElementById('puzzle-feedback').innerHTML='<span style="color:#27AE60">🎉 Puzzle selesai! Hebat!</span>';
+    }
+  }
+}
+
+// ===== EVALUASI =====
+let evalState={idx:0,answers:[],submitted:false};
+
+function initEval(){
+  if(evalState.submitted){showEvalResult();return}
+  evalState={idx:0,answers:new Array(quizQuestions.length).fill(null),submitted:false};
+  renderEvalQuestion();
+}
+
+function renderEvalQuestion(){
+  const area=document.getElementById('eval-area');
+  const q=quizQuestions[evalState.idx];
+  const i=evalState.idx;
+  const total=quizQuestions.length;
+  const answered=evalState.answers[i];
+  let optionsHtml='';
+  if(q.type==='mc'||q.type==='img'){
+    optionsHtml=q.opts.map((o,oi)=>`
+      <div class="quiz-option ${answered===oi?'selected':''}" onclick="selectEvalAnswer(${oi})" style="margin-bottom:8px;">${o}</div>
+    `).join('');
+  }else if(q.type==='tf'){
+    optionsHtml=`
+      <div class="quiz-option ${answered===true?'selected':''}" onclick="selectEvalAnswer(true)" style="margin-bottom:8px;">✅ Benar</div>
+      <div class="quiz-option ${answered===false?'selected':''}" onclick="selectEvalAnswer(false)" style="margin-bottom:8px;">❌ Salah</div>
+    `;
+  }
+  area.innerHTML=`
+    <div class="bali-card" style="padding:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span class="badge badge-gold">Soal ${i+1}/${total}</span>
+        <span style="font-size:12px;color:var(--cream);opacity:.6;">${q.type==='mc'?'Pilihan Ganda':q.type==='tf'?'Benar/Salah':'Tebak Gambar'}</span>
+      </div>
+      <div class="progress-bar" style="margin-bottom:16px;"><div class="progress-fill" style="width:${((i+1)/total)*100}%;"></div></div>
+      ${q.type==='img'?`<div style="text-align:center;font-size:64px;margin-bottom:12px;">${q.emoji}</div>`:''}
+      <p style="font-family:'Crimson Pro',serif;font-size:16px;color:var(--cream);margin:0 0 16px;line-height:1.6;">${q.q}</p>
+      ${optionsHtml}
+      <div style="display:flex;justify-content:space-between;margin-top:16px;">
+        <button class="btn-maroon" onclick="evalNav(-1)" ${i===0?'disabled style="opacity:.3;pointer-events:none;"':''}>← Sebelumnya</button>
+        ${i<total-1
+          ?`<button class="btn-gold" onclick="evalNav(1)">Selanjutnya →</button>`
+          :`<button class="btn-gold" onclick="submitEval()">Selesai ✓</button>`
+        }
+      </div>
+    </div>
+  `;
+}
+
+function selectEvalAnswer(val){
+  evalState.answers[evalState.idx]=val;
+  renderEvalQuestion();
+}
+
+function evalNav(dir){
+  evalState.idx+=dir;
+  if(evalState.idx<0)evalState.idx=0;
+  if(evalState.idx>=quizQuestions.length)evalState.idx=quizQuestions.length-1;
+  renderEvalQuestion();
+}
+
+function submitEval(){
+  const unanswered=evalState.answers.filter(a=>a===null).length;
+  if(unanswered>0){showToast(`Masih ada ${unanswered} soal belum dijawab!`,'error');return}
+  evalState.submitted=true;
+  let correct=0;
+  quizQuestions.forEach((q,i)=>{
+    if(evalState.answers[i]===q.ans)correct++;
+  });
+  state.evalScore=correct;
+  state.evalTotal=quizQuestions.length;
+  state.evalDone=true;
+  addScore(correct*5);
+  updateDashboard();
+  checkBadges();
+  showEvalResult();
+}
+
+function showEvalResult(){
+  const area=document.getElementById('eval-area');
+  const pct=Math.round((state.evalScore/state.evalTotal)*100);
+  let cat,catColor;
+  if(pct>=90){cat='🌟 Sangat Baik';catColor='#27AE60'}
+  else if(pct>=70){cat='👍 Baik';catColor='var(--gold)'}
+  else{cat='📖 Perlu Belajar Lagi';catColor='var(--red-accent)'}
+  area.innerHTML=`
+    <div class="bali-card" style="padding:24px;text-align:center;">
+      <div style="font-size:64px;margin-bottom:12px;">${pct>=90?'🏆':pct>=70?'⭐':'📚'}</div>
+      <h3 style="font-family:'Cinzel Decorative',serif;color:var(--gold);font-size:20px;margin:0 0 8px;">Hasil Evaluasi</h3>
+      <div style="font-size:48px;font-family:'Cinzel Decorative',serif;color:${catColor};margin:12px 0;">${pct}%</div>
+      <p style="font-size:16px;color:${catColor};font-family:'Crimson Pro',serif;margin:0 0 8px;">${cat}</p>
+      <p style="font-size:14px;color:var(--cream);opacity:.7;margin:0 0 20px;">Benar: ${state.evalScore} dari ${state.evalTotal} soal</p>
+      <div class="progress-bar" style="height:8px;margin-bottom:20px;">
+        <div class="progress-fill" style="width:${pct}%;background:linear-gradient(90deg,${catColor},var(--gold));"></div>
+      </div>
+      <div style="text-align:left;margin-top:16px;">
+        <h4 style="color:var(--gold);font-size:14px;margin:0 0 12px;font-family:'Crimson Pro',serif;">📋 Review Jawaban:</h4>
+        ${quizQuestions.map((q,i)=>{
+          const isCorrect=evalState.answers[i]===q.ans;
+          return`<div style="padding:10px;margin-bottom:8px;border-radius:8px;border-left:3px solid ${isCorrect?'#27AE60':'var(--red-accent)'};background:rgba(${isCorrect?'39,174,96':'192,57,43'},.05);">
+            <p style="font-size:13px;color:var(--cream);margin:0 0 4px;"><strong>${i+1}.</strong> ${q.q}</p>
+            <p style="font-size:12px;margin:0;color:${isCorrect?'#27AE60':'var(--red-accent)'};">${isCorrect?'✅ Benar':'❌ Salah'} — ${q.exp}</p>
+          </div>`;
+        }).join('')}
+      </div>
+      <button class="btn-gold" style="margin-top:20px;" onclick="resetEval()">🔄 Ulangi Evaluasi</button>
+    </div>
+  `;
+}
+
+function resetEval(){
+  evalState={idx:0,answers:new Array(quizQuestions.length).fill(null),submitted:false};
+  state.evalDone=false;
+  renderEvalQuestion();
+}
+
+// ===== LOADING SCREEN =====
+function startLoading(){
+  const bar=document.getElementById('load-bar');
+  let progress=0;
+  const interval=setInterval(()=>{
+    progress+=Math.random()*15+5;
+    if(progress>=100){
+      progress=100;
+      clearInterval(interval);
+      setTimeout(()=>{
+        document.getElementById('loading-screen').style.opacity='0';
+        document.getElementById('loading-screen').style.transition='opacity .5s';
+        setTimeout(()=>{
+          document.getElementById('loading-screen').style.display='none';
+          document.getElementById('app').style.display='flex';
+          document.getElementById('app').style.flexDirection='column';
+        },500);
+      },400);
+    }
+    bar.style.width=progress+'%';
+  },150);
+}
+
+// ===== ELEMENT SDK =====
+const defaultConfig={
+  site_title:'Gamelan Bali',
+  welcome_text:'Selamat Datang di Dunia Gamelan Bali',
+  background_color:'#1A1A1A',
+  surface_color:'#4A0E1A',
+  text_color:'#FDF5E6',
+  primary_action_color:'#D4A843',
+  secondary_action_color:'#6B1D2A',
+  font_family:'Cinzel Decorative',
+  font_size:16
+};
+
+function applyConfig(config){
+  const c=Object.assign({},defaultConfig,config);
+  const navT=document.getElementById('nav-title');
+  if(navT)navT.textContent=c.site_title;
+  const wh=document.getElementById('welcome-heading');
+  if(wh)wh.textContent=c.welcome_text;
+  document.body.style.background=`linear-gradient(180deg,${c.background_color} 0%,${c.surface_color} 50%,${c.background_color} 100%)`;
+  document.body.style.color=c.text_color;
+  const font=c.font_family||defaultConfig.font_family;
+  document.querySelectorAll('[style*="Cinzel Decorative"]').forEach(el=>{
+    el.style.fontFamily=`${font}, Cinzel Decorative, serif`;
+  });
+  const wHead=document.getElementById('welcome-heading');
+  if(wHead)wHead.style.fontSize=`${(c.font_size||defaultConfig.font_size)*1.8}px`;
+}
+
+if(window.elementSdk){
+  window.elementSdk.init({
+    defaultConfig,
+    onConfigChange:async(config)=>applyConfig(config),
+    mapToCapabilities:(config)=>({
+      recolorables:[
+        {get:()=>config.background_color||defaultConfig.background_color,set:v=>{config.background_color=v;window.elementSdk.setConfig({background_color:v})}},
+        {get:()=>config.surface_color||defaultConfig.surface_color,set:v=>{config.surface_color=v;window.elementSdk.setConfig({surface_color:v})}},
+        {get:()=>config.text_color||defaultConfig.text_color,set:v=>{config.text_color=v;window.elementSdk.setConfig({text_color:v})}},
+        {get:()=>config.primary_action_color||defaultConfig.primary_action_color,set:v=>{config.primary_action_color=v;window.elementSdk.setConfig({primary_action:v})}},
+        {get:()=>config.secondary_action_color||defaultConfig.secondary_action_color,set:v=>{config.secondary_action_color=v;window.elementSdk.setConfig({secondary_action_color:v})}}
+      ],
+      borderables:[],
+      fontEditable:{get:()=>config.font_family||defaultConfig.font_family,set:v=>{config.font_family=v;window.elementSdk.setConfig({font_family:v})}},
+      fontSizeable:{get:()=>config.font_size||defaultConfig.font_size,set:v=>{config.font_size=v;window.elementSdk.setConfig({font_size:v})}}
+    }),
+    mapToEditPanelValues:(config)=>new Map([
+      ['site_title',config.site_title||defaultConfig.site_title],
+      ['welcome_text',config.welcome_text||defaultConfig.welcome_text]
+    ])
+  });
+}
+
+// ===== INIT =====
+startLoading();
+buildFungsiAccordions();
+buildNoteKeys();
+navigateTo('beranda');
+lucide.createIcons();
+  </script>
+</body>
+</html>
