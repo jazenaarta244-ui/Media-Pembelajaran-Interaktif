@@ -1,0 +1,569 @@
+/* ============================================================
+   GAMELAN BALI INTERAKTIF — style.css
+   ============================================================ */
+
+/* ── Reset & Base ─────────────────────────────────────────── */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) var(--maroon-dark);
+}
+
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: var(--maroon-dark); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+/* ── CSS Custom Properties ────────────────────────────────── */
+:root {
+  --gold:        #D4A843;
+  --gold-light:  #F0D68A;
+  --maroon:      #6B1D2A;
+  --maroon-dark: #4A0E1A;
+  --black:       #1A1A1A;
+  --cream:       #FDF5E6;
+  --cream-dark:  #F5E6C8;
+  --red-accent:  #C0392B;
+}
+
+/* ── Loading Screen ───────────────────────────────────────── */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1A1A1A 0%, #4A0E1A 50%, #1A1A1A 100%);
+}
+
+.loader-mandala {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  animation: rotateMandala 4s linear infinite;
+}
+
+.loader-mandala::before,
+.loader-mandala::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 3px solid transparent;
+  border-radius: 50%;
+}
+
+.loader-mandala::before {
+  border-top-color: var(--gold);
+  border-bottom-color: var(--gold);
+  animation: rotateMandala 2s linear infinite;
+}
+
+.loader-mandala::after {
+  border-left-color: var(--red-accent);
+  border-right-color: var(--red-accent);
+  animation: rotateMandala 2s linear infinite reverse;
+}
+
+.loader-inner {
+  position: absolute;
+  inset: 20px;
+  border: 2px solid var(--gold-light);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes rotateMandala { to { transform: rotate(360deg); } }
+
+@keyframes pulse {
+  0%, 100% { opacity: .3; transform: scale(.9); }
+  50%       { opacity: 1;  transform: scale(1.1); }
+}
+
+.loader-text {
+  color: var(--gold);
+  font-family: 'Cinzel Decorative', serif;
+  margin-top: 30px;
+  font-size: 14px;
+  letter-spacing: 4px;
+  animation: fadeInOut 2s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: .4; }
+  50%       { opacity: 1; }
+}
+
+.loading-bar {
+  width: 200px;
+  height: 3px;
+  background: rgba(212, 168, 67, .2);
+  border-radius: 2px;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  border-radius: 2px;
+  transition: width .3s;
+  width: 0;
+}
+
+/* ── Page Transitions ─────────────────────────────────────── */
+.page {
+  display: none;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+
+.page.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Ornamental Borders ───────────────────────────────────── */
+.ornament-border {
+  position: relative;
+  border: 2px solid var(--gold);
+}
+
+.ornament-border::before,
+.ornament-border::after {
+  content: '❖';
+  position: absolute;
+  color: var(--gold);
+  font-size: 14px;
+}
+
+.ornament-border::before {
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.ornament-border::after {
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ── Poleng Pattern ───────────────────────────────────────── */
+.poleng-border {
+  background-image: repeating-conic-gradient(#1A1A1A 0% 25%, #FDF5E6 0% 50%);
+  background-size: 12px 12px;
+  padding: 3px;
+}
+
+/* ── Card Styles ──────────────────────────────────────────── */
+.bali-card {
+  background: linear-gradient(145deg, rgba(74, 14, 26, .9), rgba(26, 26, 26, .95));
+  border: 1px solid rgba(212, 168, 67, .3);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  transition: all .35s cubic-bezier(.4, 0, .2, 1);
+}
+
+.bali-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+  box-shadow: 0 12px 40px rgba(212, 168, 67, .15);
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--black);
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all .3s;
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px;
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 168, 67, .4);
+}
+
+.btn-gold:active { transform: scale(.97); }
+
+.btn-maroon {
+  background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
+  color: var(--gold);
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(212, 168, 67, .3);
+  cursor: pointer;
+  transition: all .3s;
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px;
+}
+
+.btn-maroon:hover {
+  border-color: var(--gold);
+  box-shadow: 0 4px 15px rgba(107, 29, 42, .5);
+}
+
+/* ── Badge ────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-gold {
+  background: rgba(212, 168, 67, .15);
+  color: var(--gold);
+  border: 1px solid rgba(212, 168, 67, .3);
+}
+
+/* ── Progress Bar ─────────────────────────────────────────── */
+.progress-bar {
+  height: 6px;
+  background: rgba(212, 168, 67, .15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 3px;
+  transition: width .6s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* ── Tab System ───────────────────────────────────────────── */
+.tab-btn {
+  padding: 8px 18px;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  transition: all .3s;
+  color: rgba(212, 168, 67, .5);
+  border: 1px solid transparent;
+  border-bottom: none;
+  font-family: 'Crimson Pro', serif;
+  font-size: 14px;
+  background: transparent;
+}
+
+.tab-btn.active {
+  color: var(--gold);
+  background: rgba(212, 168, 67, .08);
+  border-color: rgba(212, 168, 67, .3);
+}
+
+.tab-content {
+  display: none;
+  animation: fadeUp .4s ease;
+}
+
+.tab-content.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Accordion ────────────────────────────────────────────── */
+.accordion-header {
+  cursor: pointer;
+  padding: 14px 18px;
+  background: rgba(212, 168, 67, .05);
+  border: 1px solid rgba(212, 168, 67, .15);
+  border-radius: 8px;
+  transition: all .3s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--gold);
+  font-family: 'Crimson Pro', serif;
+}
+
+.accordion-header:hover {
+  background: rgba(212, 168, 67, .1);
+  border-color: rgba(212, 168, 67, .3);
+}
+
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .4s ease, padding .4s ease;
+  padding: 0 18px;
+}
+
+.accordion-body.open {
+  max-height: 800px;
+  padding: 14px 18px;
+}
+
+/* ── Modal ────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .7);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.modal-overlay.show {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-box {
+  background: linear-gradient(145deg, #2A0A14, #1A1A1A);
+  border: 1px solid var(--gold);
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 480px;
+  width: 90%;
+  max-height: 80%;
+  overflow-y: auto;
+  transform: scale(.9);
+  transition: transform .3s;
+}
+
+.modal-overlay.show .modal-box { transform: scale(1); }
+
+/* ── Drag & Drop ──────────────────────────────────────────── */
+.drag-item {
+  cursor: grab;
+  padding: 10px 16px;
+  background: rgba(212, 168, 67, .1);
+  border: 1px dashed rgba(212, 168, 67, .4);
+  border-radius: 8px;
+  color: var(--cream);
+  font-size: 14px;
+  transition: all .2s;
+  user-select: none;
+}
+
+.drag-item:active { cursor: grabbing; transform: scale(1.05); }
+.drag-item.dragging { opacity: .5; }
+
+.drop-zone {
+  min-height: 48px;
+  border: 2px dashed rgba(212, 168, 67, .2);
+  border-radius: 8px;
+  padding: 8px;
+  transition: all .3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drop-zone.over    { border-color: var(--gold);        background: rgba(212, 168, 67, .08); }
+.drop-zone.correct { border-color: #27AE60;            background: rgba(39, 174, 96, .1); }
+.drop-zone.wrong   { border-color: var(--red-accent);  background: rgba(192, 57, 43, .1); }
+
+/* ── Memory Cards ─────────────────────────────────────────── */
+.memory-card {
+  width: 80px;
+  height: 80px;
+  perspective: 600px;
+  cursor: pointer;
+}
+
+.memory-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform .5s;
+  transform-style: preserve-3d;
+}
+
+.memory-card.flipped .memory-card-inner { transform: rotateY(180deg); }
+
+.memory-card-front,
+.memory-card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.memory-card-front {
+  background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
+  border: 1px solid rgba(212, 168, 67, .3);
+}
+
+.memory-card-back {
+  background: rgba(212, 168, 67, .1);
+  border: 1px solid var(--gold);
+  transform: rotateY(180deg);
+  font-size: 14px;
+  padding: 4px;
+  text-align: center;
+  color: var(--cream);
+}
+
+.memory-card.matched .memory-card-inner { opacity: .5; }
+
+/* ── Quiz Options ─────────────────────────────────────────── */
+.quiz-option {
+  padding: 12px 16px;
+  border: 1px solid rgba(212, 168, 67, .2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .3s;
+  color: var(--cream);
+  font-size: 14px;
+}
+
+.quiz-option:hover    { border-color: var(--gold);       background: rgba(212, 168, 67, .05); }
+.quiz-option.selected { border-color: var(--gold);       background: rgba(212, 168, 67, .1); }
+.quiz-option.correct  { border-color: #27AE60;           background: rgba(39, 174, 96, .15);  color: #27AE60; }
+.quiz-option.wrong    { border-color: var(--red-accent); background: rgba(192, 57, 43, .15);  color: var(--red-accent); }
+
+/* ── Instrument Button ────────────────────────────────────── */
+.instrument-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid rgba(212, 168, 67, .3);
+  background: radial-gradient(circle, rgba(212, 168, 67, .1), transparent);
+  transition: all .3s;
+  color: var(--gold);
+  font-size: 11px;
+  gap: 2px;
+}
+
+.instrument-btn:hover {
+  border-color: var(--gold);
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(212, 168, 67, .3);
+}
+
+.instrument-btn:active { transform: scale(.95); }
+
+.instrument-btn.playing {
+  animation: instrumentPulse .4s ease;
+  border-color: var(--gold-light);
+  box-shadow: 0 0 30px rgba(212, 168, 67, .5);
+}
+
+@keyframes instrumentPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(212, 168, 67, .6); }
+  100% { box-shadow: 0 0 30px 15px rgba(212, 168, 67, 0); }
+}
+
+/* ── Gapura Divider ───────────────────────────────────────── */
+.gapura-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 0;
+  color: var(--gold);
+  opacity: .6;
+}
+
+.gapura-divider::before,
+.gapura-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ── Toast ────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  z-index: 200;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: 'Crimson Pro', serif;
+  transition: transform .4s cubic-bezier(.4, 0, .2, 1);
+  pointer-events: none;
+}
+
+.toast.show       { transform: translateX(-50%) translateY(0); }
+.toast-success    { background: rgba(39, 174, 96, .9);  color: #fff; border: 1px solid #27AE60; }
+.toast-error      { background: rgba(192, 57, 43, .9);  color: #fff; border: 1px solid var(--red-accent); }
+.toast-info       { background: rgba(212, 168, 67, .9); color: var(--black); border: 1px solid var(--gold); }
+
+/* ── Instrumen Grid ───────────────────────────────────────── */
+.instrumen-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.instrumen-item img {
+  width: 90px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(212, 168, 67, .3);
+}
+
+.instrumen-item p {
+  color: var(--gold);
+  font-family: 'Crimson Pro', serif;
+  font-size: 13px;
+  margin: 0;
+  text-align: center;
+}
+
+/* ── Navigation Bar ───────────────────────────────────────── */
+.nav-item {
+  background: none;
+  border: none;
+  color: var(--gold);
+  opacity: .5;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  transition: all .3s;
+  font-size: 10px;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .memory-card     { width: 60px; height: 60px; }
+  .instrument-btn  { width: 64px; height: 64px; font-size: 10px; }
+  .nav-text        { display: none; }
+}
