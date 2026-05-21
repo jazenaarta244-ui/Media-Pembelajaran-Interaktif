@@ -961,20 +961,15 @@ function buildSoundboard(area){
 }
 
 function playSoundboardInst(name, el) {
-  // 1. Tambahkan efek animasi bergetar/berkedip pada tombol saat diklik
   el.classList.add('playing');
   setTimeout(() => el.classList.remove('playing'), 400);
   
-  // 2. Ubah nama instrumen menjadi huruf kecil agar pas dengan nama file mp3
-  const namaFile = name.toLowerCase();
+  // HAPUS .toLowerCase() agar tetap menggunakan huruf besar di awal (Gong, Gangsa, Reong)
+  const namaFile = name; 
   
-  // 3. Panggil file audio dari folder audio (Menggunakan backtick standar)
   const audioInstrumen = new Audio(`audio/${namaFile}.mp3`);
-  
-  // 4. Set volume (0.0 sampai 1.0)
   audioInstrumen.volume = 0.8;
   
-  // 5. Mainkan audio kustom Anda
   audioInstrumen.play().catch(err => {
     console.log("Gagal memutar audio soundboard: ", err);
   });
