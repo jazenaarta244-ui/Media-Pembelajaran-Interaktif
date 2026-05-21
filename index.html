@@ -968,7 +968,7 @@ function playSoundboardInst(name, el) {
   // 2. Ubah nama instrumen menjadi huruf kecil agar pas dengan nama file mp3
   const namaFile = name.toLowerCase();
   
-  // 3. Panggil file audio dari folder audio
+  // 3. Panggil file audio dari folder audio (Menggunakan backtick standar)
   const audioInstrumen = new Audio(`audio/${namaFile}.mp3`);
   
   // 4. Set volume (0.0 sampai 1.0)
