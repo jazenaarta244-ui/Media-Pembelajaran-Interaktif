@@ -958,6 +958,14 @@ function buildSoundboard(area){
     </div>
   `;
 }
+const daftarAudioInstrumen = [
+  'audio/Gong.mp3',
+  'audio/Gangsa.mp3',
+  'audio/Jegog.mp3',
+  'audio/Jublag.mp3',
+  'audio/Reong.mp3',
+  'audio/Suling.mp3'
+];
 
 function playSoundboardInst(name, el) {
   // 1. Tambahkan efek animasi bergetar/berkedip pada tombol saat diklik
@@ -968,7 +976,7 @@ function playSoundboardInst(name, el) {
   const namaFile = name.toLowerCase();
   
   // 3. Panggil file audio dari folder audio/soundboard/
-const audioInstrumen = new Audio(`audio/{namaFile}.mp3`);
+const audioInstrumen = new Audio(daftarAudioInstrumen[i % daftarAudioInstrumen.length]);
   
   // 4. Set volume (0.0 sampai 1.0)
   audioInstrumen.volume = 0.8;
